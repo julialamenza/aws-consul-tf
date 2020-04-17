@@ -3,5 +3,5 @@ output "consul_vpc_id" {
 }
 
 output "consul_subnets" {
-  value = ["${aws_subnet.consul.*.id}"]
+  value = "${aws_subnet.consul.*.id}"
 }
