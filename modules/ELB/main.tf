@@ -1,6 +1,6 @@
 resource "aws_elb" "consul_servers" {
   name                      = "${var.elb_name}-servers"
-  subnets                   = "${var.consul_subnets}, count.index"
+  subnets                   = ["var.subnets"]
   security_groups           = "${var.security_groups}"
   cross_zone_load_balancing = true
 
@@ -27,7 +27,7 @@ resource "aws_elb" "consul_servers" {
 
 resource "aws_elb" "consul_clients" {
   name                      = "${var.elb_name}-clients"
-  subnets                   = "[${var.consul_subnets}, count.index]"
+  subnets                   = ["var.subnets"]
   security_groups           = "${var.security_groups}"
   cross_zone_load_balancing = true
 

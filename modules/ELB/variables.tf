@@ -5,9 +5,8 @@ variable "elb_name" {
 variable "health_check_target" {
   default = "TCP:8500"
 }
-variable "consul_subnets" {
-  description = "The subnets for the Consul cluster"
-  type        = "list"
+variable "subnets" {
+  type = "list"
 }
 variable "security_groups" {
   type = "list"

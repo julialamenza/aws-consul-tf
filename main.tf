@@ -47,7 +47,7 @@ module "Consul" {
 
 module "ELB" {
   source               = "./modules/ELB"
-  consul_subnets      = "${module.VPC.consul_subnets}"
+  subnets      = ["${module.VPC.consul_subnets}"]
   security_groups      = ["${module.SecurityGroups.consul_securitygroup_id}"]
   servers_instance_ids = "${module.Consul.servers_ids}"
   clients_instance_ids = "${module.Consul.clients_ids}"

@@ -6,7 +6,7 @@ resource "aws_instance" "server" {
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
 
-  subnet_id              = "${var.consul_subnets}, count.index"
+  subnet_id              = "${element(var.consul_subnets, count.index)}"
   iam_instance_profile   = "${var.consul_instance_profile}"
   vpc_security_group_ids = ["${var.consul_securitygroup_id}"]
 
@@ -25,7 +25,7 @@ resource "aws_instance" "client" {
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
 
-  subnet_id              = "${var.consul_subnets}, count.index"
+  subnet_id              = "${element(var.consul_subnets, count.index)}"
   iam_instance_profile   = "${var.consul_instance_profile}"
   vpc_security_group_ids = ["${var.consul_securitygroup_id}"]
 
