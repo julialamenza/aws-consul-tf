@@ -2,12 +2,12 @@ provider "aws" {
   region  = "${var.aws_region}"
   profile = "${var.aws_profile}"
 }
-
+/*
 resource "aws_key_pair" "consul" {
-  key_name   = "${var.namespace}"
-  public_key = "${file("${var.public_key_path}")}"
+  key_name   = "${var.key_name}"
+  #public_key = "${file("${var.public_key_path}")}"
 }
-
+*/
 module "VPC" {
   source         = "./modules/VPC"
   namespace      = "${var.namespace}"
@@ -36,7 +36,7 @@ module "Consul" {
   consul_join_tag_key     = "${var.consul_join_tag_key}"
   consul_join_tag_value   = "${var.consul_join_tag_value}"
   namespace               = "${var.namespace}"
-  key_name                = "${aws_key_pair.consul.id}"
+  key_name                = "${var.key_name}"
   clients                 = "${var.clients}"
   servers                 = "${var.servers}"
   ownerid                 = "${var.ownerid}"
@@ -47,7 +47,7 @@ module "Consul" {
 
 module "ELB" {
   source               = "./modules/ELB"
-  subnets      = ["${module.VPC.consul_subnets}"]
+  subnets              = ["${module.VPC.consul_subnets}"]
   security_groups      = ["${module.SecurityGroups.consul_securitygroup_id}"]
   servers_instance_ids = "${module.Consul.servers_ids}"
   clients_instance_ids = "${module.Consul.clients_ids}"

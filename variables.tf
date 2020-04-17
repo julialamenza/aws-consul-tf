@@ -40,11 +40,11 @@ variable "consul_join_tag_key" {
 variable "consul_join_tag_value" {
   description = "The value of the tag to auto-join on EC2."
 }
-
+/*
 variable "public_key_path" {
   description = "The absolute path on disk to the SSH public key."
 }
-
+*/
 variable "sg_cidr" {
   description = "The CIDR to lockdown access to Security group ports to"
 }
@@ -54,3 +54,6 @@ variable "virtualization_type" {}
 variable "ami_name" {}
 variable "channel" {}
 
+variable "key_name" {
+  
+}

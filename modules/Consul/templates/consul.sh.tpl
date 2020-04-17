@@ -19,8 +19,12 @@ sudo chmod +x consul
 sudo mv consul /usr/local/bin/consul
 
 # Setup Consul
-sudo mkdir -p /mnt/consul
+sudo useradd --system --home /etc/consul.d --shell /bin/false consul
+sudo mkdir --parents /opt/consul
+sudo chown --recursive consul:consul /opt/consul
+sudo mkdir -p /opt/consul/data
 sudo mkdir -p /etc/consul.d
+sudo mkdir -p /etc/
 sudo tee /etc/consul.d/config.json > /dev/null <<EOF
 {
   "bind_addr": "$PRIVATE_IP",
@@ -28,7 +32,7 @@ sudo tee /etc/consul.d/config.json > /dev/null <<EOF
   "advertise_addr_wan": "$PUBLIC_IP",
   "datacenter": "Abs-lab",
   "acl_datacenter": "Abs-lab",
-  "data_dir": "/mnt/consul",
+  "data_dir": "/opt/consul/data",
   "disable_remote_exec": true,
   "disable_update_check": true,
   "leave_on_terminate": true,
@@ -36,20 +40,28 @@ sudo tee /etc/consul.d/config.json > /dev/null <<EOF
 }
 EOF
 
-sudo tee /etc/init/consul.conf > /dev/null <<"EOF"
-description "Consul"
-start on runlevel [2345]
-stop on runlevel [06]
-respawn
-post-stop exec sleep 5
-# This is to avoid Upstart re-spawning the process upon `consul leave`
-normal exit 0 INT
-# Stop consul will not mark node as failed but left
-kill signal INT
-exec /usr/local/bin/consul agent \
-  -ui \
-  -config-dir="/etc/consul.d"
+sudo tee /etc/systemd/system/consul.service > /dev/null <<"EOF"
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/opt/consul/config/server.json
+[Service]
+Type=notify
+User=consul
+Group=consul
+ExecStart=/usr/bin/consul agent -config-dir /etc/consul.d/config.json -data-dir /opt/consul/data
+ExecReload=/usr/bin/consul reload
+KillMode=process
+Restart=on-failure
+TimeoutSec=300s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-sudo service consul stop || true
-sudo service consul start
+sudo systemctl daemon-reload
+sudo systemctl start consul
+sudo systemctl enable consul
