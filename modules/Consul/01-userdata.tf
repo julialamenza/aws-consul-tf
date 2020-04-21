@@ -36,8 +36,8 @@ data "template_file" "server" {
     config = <<EOF
      "bootstrap_expect": ${var.servers},
      "client_addr": "0.0.0.0",
-     "acl_default_policy":"deny",
-     "acl_down_policy":"deny",
+     "acl_default_policy":"allow",
+     "acl_down_policy":"allow",
      "node_name": "${var.namespace}-server-${count.index}",
      "server": true,
      "ui": true,
